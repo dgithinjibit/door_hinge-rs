@@ -91,7 +91,7 @@ The compiler proves that a secret can never reach a logger, recorder, or wire fo
 │  pipelock-core: RedactedSecret type                            │
 │  pipelock-proxy: HTTP forward proxy (MVP)                      │
 │  pipelock-scanner: URL scanner (MVP)                           │
-│  pipelock-recorder: BLAKE3 hash-chained log (MVP)             │
+│  pipelock-recorder: BLAKE3 hash-chained log (MVP)              │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
