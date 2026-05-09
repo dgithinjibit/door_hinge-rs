@@ -74,28 +74,9 @@ The compiler proves that a secret can never reach a logger, recorder, or wire fo
 
 ## How the two projects connect
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  pipelock (Go) — primary product                                │
-│                                                                 │
-│  11-layer URL scanner, MCP proxy, response scanning,           │
-│  kill switch, flight recorder, signed receipts, assessment     │
-│                                                                 │
-│  pipelock sandbox --config pipelock.yaml -- python agent.py    │
-│         │                                                       │
-│         │  re-exec (fork + exec)                               │
-│         ▼                                                       │
-│  pipelock-rs (Rust) — security-critical subsystems             │
-│                                                                 │
-│  pipelock-sandbox: 6-layer kernel isolation                    │
-│  pipelock-core: RedactedSecret type                            │
-│  pipelock-proxy: HTTP forward proxy (MVP)                      │
-│  pipelock-scanner: URL scanner (MVP)                           │
-│  pipelock-recorder: BLAKE3 hash-chained log (MVP)              │
-└─────────────────────────────────────────────────────────────────┘
-```
+The two implementations are **not linked at runtime as libraries**. The Go binary shells out to the Rust binary for sandboxed execution via re-exec: `pipelock sandbox <cmd>`. The Go side doesn't need to know about Landlock or seccomp internals — it just forks the Rust binary, which handles all the kernel-level isolation before exec'ing the agent command.
 
-The two implementations are **not linked at runtime as libraries**. The Go binary shells out to the Rust binary for sandboxed execution. The Rust binary can also be used standalone.
+The Rust binary can also be used standalone.
 
 The Rust workspace also serves as a foundation for a future full port if/when the Go implementation reaches its limits — but that is not the current goal.
 
