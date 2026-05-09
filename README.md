@@ -50,15 +50,15 @@ Enforces "no secrets to disk" at compile time:
 ```rust
 let secret = RedactedSecret::new(api_key_bytes);
 
-// ❌ Won't compile - no Display/Debug/Serialize
+//  Won't compile - no Display/Debug/Serialize
 println!("{:?}", secret);  // Compile error
 
-// ✅ Only way to access bytes
+//  Only way to access bytes
 secret.with_bytes(|bytes| {
     // Use bytes here, they never escape this closure
 });
 
-// ✅ Serializes as placeholder
+//  Serializes as placeholder
 serde_json::to_string(&secret)  // → "<pl:api_key:32>"
 ```
 
