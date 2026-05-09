@@ -1,0 +1,31 @@
+# Example pipelock-rs config. All fields are optional; defaults shown below.
+#
+# Run with:
+#   cargo run -p pipelock -- run --config examples/pipelock.yaml
+
+# Where the proxy listens. Use 127.0.0.1 to keep it local-only.
+listen: 127.0.0.1:9999
+
+# tracing-subscriber filter. e.g. "info", "debug", "pipelock=trace,info".
+log_level: info
+
+# Domains never allowed, even if also on the allowlist.
+# Suffix-matched: "evil.com" also blocks "api.evil.com".
+blocklist:
+  - localhost.evil.example
+  - tracking.example.net
+
+# If non-empty, only these domains are permitted (suffix-matched).
+# Leave empty to allow any non-blocklisted domain.
+allowlist: []
+
+# DLP regex set: AWS/GitHub/Anthropic/OpenAI/Stripe/Slack/etc.
+# Matches across the full URL string. Hits return 403.
+dlp:
+  enabled: true
+
+# Hard cap on URL length (bytes). Requests above this are blocked outright.
+max_url_length: 8192
+
+# JSONL evidence log with a BLAKE3 hash chain. Comment out to disable.
+recorder_path: ./pipelock-evidence.jsonl

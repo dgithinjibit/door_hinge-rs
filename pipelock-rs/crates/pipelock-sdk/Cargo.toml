@@ -1,0 +1,14 @@
+[package]
+name = "pipelock-sdk"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Public re-exports for embedders."
+
+[dependencies]
+pipelock-core = { workspace = true }
+
+[lints]
+workspace = true
