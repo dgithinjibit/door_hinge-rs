@@ -411,9 +411,8 @@ fn mount_private_shm() -> Result<(), SandboxError> {
     use nix::mount::{mount, umount, MsFlags};
 
     // Unmount host /dev/shm
-    umount("/dev/shm").map_err(|e| {
-        SandboxError::Io(std::io::Error::other(format!("umount /dev/shm: {}", e)))
-    })?;
+    umount("/dev/shm")
+        .map_err(|e| SandboxError::Io(std::io::Error::other(format!("umount /dev/shm: {}", e))))?;
 
     // Mount private tmpfs
     mount(
@@ -423,9 +422,7 @@ fn mount_private_shm() -> Result<(), SandboxError> {
         MsFlags::empty(),
         Some("size=64m"),
     )
-    .map_err(|e| {
-        SandboxError::Io(std::io::Error::other(format!("mount /dev/shm: {}", e)))
-    })?;
+    .map_err(|e| SandboxError::Io(std::io::Error::other(format!("mount /dev/shm: {}", e))))?;
 
     Ok(())
 }
@@ -456,9 +453,8 @@ fn apply_rlimits() -> Result<(), SandboxError> {
 
     // Limit number of processes (prevent fork bombs)
     // Set to 4096 to allow shell commands with fork/exec chains
-    setrlimit(Resource::RLIMIT_NPROC, 4096, 4096).map_err(|e| {
-        SandboxError::Io(std::io::Error::other(format!("setrlimit NPROC: {}", e)))
-    })?;
+    setrlimit(Resource::RLIMIT_NPROC, 4096, 4096)
+        .map_err(|e| SandboxError::Io(std::io::Error::other(format!("setrlimit NPROC: {}", e))))?;
 
     // Limit file size (prevent disk exhaustion)
     setrlimit(
@@ -466,9 +462,7 @@ fn apply_rlimits() -> Result<(), SandboxError> {
         10 * 1024 * 1024 * 1024,
         10 * 1024 * 1024 * 1024,
     )
-    .map_err(|e| {
-        SandboxError::Io(std::io::Error::other(format!("setrlimit FSIZE: {}", e)))
-    })?;
+    .map_err(|e| SandboxError::Io(std::io::Error::other(format!("setrlimit FSIZE: {}", e))))?;
 
     Ok(())
 }
