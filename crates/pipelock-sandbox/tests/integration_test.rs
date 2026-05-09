@@ -4,6 +4,8 @@
 //! Landlock, seccomp, and namespace isolation. They cannot run in the
 //! main test process because sandbox restrictions are one-way trips.
 
+#![allow(clippy::unwrap_used)] // Tests can use unwrap for clarity
+
 #![cfg(target_os = "linux")]
 
 use pipelock_sandbox::{is_sandbox_init, launch_sandboxed, run_init, LaunchConfig, Policy};

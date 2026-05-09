@@ -8,6 +8,12 @@
 //! child processes are fully contained.
 //!
 //! ## Why Rust beats Go here (PORT_PLAN §1)
+
+#![allow(unsafe_code)] // Required for syscalls (seccomp, prctl, fork, unshare, etc.)
+#![allow(clippy::vec_init_then_push)] // BPF program construction is clearer with explicit pushes
+#![allow(clippy::needless_return)] // Explicit returns improve readability in error paths
+#![allow(clippy::ptr_arg)] // PathBuf references are intentional for API consistency
+#![cfg_attr(test, allow(clippy::unwrap_used))] // Tests can use unwrap for clarity
 //!
 //! - `landlock` crate handles Landlock ABI v1/v2/v3/v4 negotiation as data,
 //!   so we never speak the raw `landlock_create_ruleset(2)` syscall numbers.

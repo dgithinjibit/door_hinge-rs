@@ -25,10 +25,10 @@ pub(crate) fn configure_loopback() -> Result<(), SandboxError> {
         }
         Ok(result) => {
             let stderr = String::from_utf8_lossy(&result.stderr);
-            Err(SandboxError::Io(io::Error::new(
-                io::ErrorKind::Other,
-                format!("ip link set lo up failed: {}", stderr),
-            )))
+            Err(SandboxError::Io(io::Error::other(format!(
+                "ip link set lo up failed: {}",
+                stderr
+            ))))
         }
         Err(e) => {
             // Non-fatal - log warning and continue

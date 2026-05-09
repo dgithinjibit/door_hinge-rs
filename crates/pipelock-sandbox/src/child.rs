@@ -330,7 +330,7 @@ fn run_init_inner() -> Result<(), SandboxError> {
         .envs(
             new_env
                 .iter()
-                .filter_map(|s| s.split_once('=').map(|(k, v)| (k, v))),
+                .filter_map(|s| s.split_once('=')),
         )
         .exec();
 
@@ -412,10 +412,7 @@ fn mount_private_shm() -> Result<(), SandboxError> {
 
     // Unmount host /dev/shm
     umount("/dev/shm").map_err(|e| {
-        SandboxError::Io(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            format!("umount /dev/shm: {}", e),
-        ))
+        SandboxError::Io(std::io::Error::other(format!("umount /dev/shm: {}", e)))
     })?;
 
     // Mount private tmpfs
@@ -427,10 +424,7 @@ fn mount_private_shm() -> Result<(), SandboxError> {
         Some("size=64m"),
     )
     .map_err(|e| {
-        SandboxError::Io(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            format!("mount /dev/shm: {}", e),
-        ))
+        SandboxError::Io(std::io::Error::other(format!("mount /dev/shm: {}", e)))
     })?;
 
     Ok(())
@@ -446,16 +440,14 @@ fn mount_private_shm() -> Result<(), SandboxError> {
 /// is covered by the Landlock policy.
 fn mount_proc() -> bool {
     use nix::mount::{mount, MsFlags};
-    match mount(
+    mount(
         Some("proc"),
         "/proc",
         Some("proc"),
         MsFlags::MS_NOSUID | MsFlags::MS_NODEV | MsFlags::MS_NOEXEC,
         None::<&str>,
-    ) {
-        Ok(_) => true,
-        Err(_) => false,
-    }
+    )
+    .is_ok()
 }
 
 /// Apply resource limits.
@@ -465,10 +457,7 @@ fn apply_rlimits() -> Result<(), SandboxError> {
     // Limit number of processes (prevent fork bombs)
     // Set to 4096 to allow shell commands with fork/exec chains
     setrlimit(Resource::RLIMIT_NPROC, 4096, 4096).map_err(|e| {
-        SandboxError::Io(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            format!("setrlimit NPROC: {}", e),
-        ))
+        SandboxError::Io(std::io::Error::other(format!("setrlimit NPROC: {}", e)))
     })?;
 
     // Limit file size (prevent disk exhaustion)
@@ -478,10 +467,7 @@ fn apply_rlimits() -> Result<(), SandboxError> {
         10 * 1024 * 1024 * 1024,
     )
     .map_err(|e| {
-        SandboxError::Io(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            format!("setrlimit FSIZE: {}", e),
-        ))
+        SandboxError::Io(std::io::Error::other(format!("setrlimit FSIZE: {}", e)))
     })?;
 
     Ok(())
