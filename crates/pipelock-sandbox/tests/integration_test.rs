@@ -36,7 +36,7 @@ macro_rules! skip_in_ci {
 #[test]
 fn test_landlock_blocks_unauthorized_read() {
     skip_in_ci!();
-    
+
     if is_sandbox_init() {
         run_init();
     }
@@ -88,7 +88,7 @@ fn test_landlock_blocks_unauthorized_read() {
 #[test]
 fn test_seccomp_blocks_kexec() {
     skip_in_ci!();
-    
+
     if is_sandbox_init() {
         run_init();
     }
@@ -120,7 +120,7 @@ fn test_seccomp_blocks_kexec() {
 #[test]
 fn test_network_namespace_isolation() {
     skip_in_ci!();
-    
+
     if is_sandbox_init() {
         run_init();
     }
@@ -185,7 +185,7 @@ fn test_strict_mode_enforcement() {
 #[test]
 fn test_per_process_temp_directory() {
     skip_in_ci!();
-    
+
     if is_sandbox_init() {
         run_init();
     }
@@ -213,7 +213,7 @@ fn test_per_process_temp_directory() {
 #[test]
 fn test_capabilities_dropped() {
     skip_in_ci!();
-    
+
     if is_sandbox_init() {
         run_init();
     }
@@ -256,7 +256,7 @@ fn test_capabilities_dropped() {
 #[test]
 fn test_environment_sanitization() {
     skip_in_ci!();
-    
+
     if is_sandbox_init() {
         run_init();
     }
