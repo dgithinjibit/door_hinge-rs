@@ -1,0 +1,14 @@
+[package]
+name = "pipelock-metrics"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Prometheus metrics and JSON stats endpoint."
+
+[dependencies]
+pipelock-core = { workspace = true }
+
+[lints]
+workspace = true

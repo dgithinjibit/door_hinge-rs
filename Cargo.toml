@@ -1,0 +1,130 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/pipelock",
+    "crates/pipelock-core",
+    "crates/pipelock-config",
+    "crates/pipelock-normalize",
+    "crates/pipelock-scanner",
+    "crates/pipelock-decide",
+    "crates/pipelock-rules",
+    "crates/pipelock-redact",
+    "crates/pipelock-seedprotect",
+    "crates/pipelock-addressprotect",
+    "crates/pipelock-killswitch",
+    "crates/pipelock-envelope",
+    "crates/pipelock-signing",
+    "crates/pipelock-receipt",
+    "crates/pipelock-recorder",
+    "crates/pipelock-audit",
+    "crates/pipelock-emit",
+    "crates/pipelock-metrics",
+    "crates/pipelock-hitl",
+    "crates/pipelock-capture",
+    "crates/pipelock-filesentry",
+    "crates/pipelock-sandbox",
+    "crates/pipelock-mcp",
+    "crates/pipelock-proxy",
+    "crates/pipelock-scanapi",
+    "crates/pipelock-sdk",
+]
+
+[workspace.package]
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.80"
+license = "Apache-2.0"
+repository = "https://github.com/dgithinjibit/pipelock"
+authors = ["pipelock-rs contributors"]
+
+[workspace.dependencies]
+# Local crates
+pipelock-core = { path = "crates/pipelock-core" }
+pipelock-config = { path = "crates/pipelock-config" }
+pipelock-normalize = { path = "crates/pipelock-normalize" }
+pipelock-scanner = { path = "crates/pipelock-scanner" }
+pipelock-decide = { path = "crates/pipelock-decide" }
+pipelock-rules = { path = "crates/pipelock-rules" }
+pipelock-redact = { path = "crates/pipelock-redact" }
+pipelock-seedprotect = { path = "crates/pipelock-seedprotect" }
+pipelock-addressprotect = { path = "crates/pipelock-addressprotect" }
+pipelock-killswitch = { path = "crates/pipelock-killswitch" }
+pipelock-envelope = { path = "crates/pipelock-envelope" }
+pipelock-signing = { path = "crates/pipelock-signing" }
+pipelock-receipt = { path = "crates/pipelock-receipt" }
+pipelock-recorder = { path = "crates/pipelock-recorder" }
+pipelock-audit = { path = "crates/pipelock-audit" }
+pipelock-emit = { path = "crates/pipelock-emit" }
+pipelock-metrics = { path = "crates/pipelock-metrics" }
+pipelock-hitl = { path = "crates/pipelock-hitl" }
+pipelock-capture = { path = "crates/pipelock-capture" }
+pipelock-filesentry = { path = "crates/pipelock-filesentry" }
+pipelock-sandbox = { path = "crates/pipelock-sandbox" }
+pipelock-mcp = { path = "crates/pipelock-mcp" }
+pipelock-proxy = { path = "crates/pipelock-proxy" }
+pipelock-scanapi = { path = "crates/pipelock-scanapi" }
+pipelock-sdk = { path = "crates/pipelock-sdk" }
+
+# External
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+thiserror = "1"
+anyhow = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tokio = { version = "1", features = ["full"] }
+clap = { version = "4", features = ["derive"] }
+url = "2"
+regex = "1"
+aho-corasick = "1"
+arc-swap = "1"
+parking_lot = "0.12"
+dashmap = "6"
+zeroize = { version = "1", features = ["derive"] }
+ed25519-dalek = { version = "2", features = ["rand_core"] }
+sha2 = "0.10"
+blake3 = "1"
+uuid = { version = "1", features = ["v4", "serde"] }
+hex = "0.4"
+base64 = "0.22"
+hyper = { version = "1", features = ["full"] }
+hyper-util = { version = "0.1", features = ["full"] }
+http-body-util = "0.1"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json", "stream"] }
+axum = "0.7"
+tokio-tungstenite = "0.24"
+notify = "6"
+unicode-normalization = "0.1"
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+unused_must_use = "deny"
+unreachable_pub = "warn"
+
+[workspace.lints.clippy]
+# Hard denies — bugs we never want shipping.
+unwrap_used = "warn"
+expect_used = "warn"
+panic = "warn"
+todo = "warn"
+dbg_macro = "warn"
+print_stdout = "allow"           # CLI binary uses println for user output.
+print_stderr = "allow"
+# Style nits we care about.
+needless_borrow = "warn"
+redundant_clone = "warn"
+manual_let_else = "warn"
+# Disable noisy / opinionated lints.
+module_name_repetitions = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
+
+[profile.dev]
+opt-level = 0

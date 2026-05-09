@@ -1,0 +1,16 @@
+[package]
+name = "pipelock-audit"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Structured audit event emitter."
+
+[dependencies]
+pipelock-core = { workspace = true }
+pipelock-recorder = { workspace = true }
+tracing = { workspace = true }
+
+[lints]
+workspace = true
