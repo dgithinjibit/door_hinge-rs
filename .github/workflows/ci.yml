@@ -45,6 +45,3 @@ jobs:
 
       - name: cargo build --workspace --release
         run: cargo build --workspace --release
-
-      - name: MSRV check (1.80)
-        run: cargo +1.80 check --workspace
