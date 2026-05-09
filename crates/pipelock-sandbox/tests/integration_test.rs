@@ -33,8 +33,8 @@ fn test_landlock_blocks_unauthorized_read() {
         exec_paths: vec![
             PathBuf::from("/usr/bin"),
             PathBuf::from("/bin"),
-            PathBuf::from("/lib64"),  // Dynamic linker needs exec permission
-            PathBuf::from("/lib"),    // Dynamic linker needs exec permission
+            PathBuf::from("/lib64"), // Dynamic linker needs exec permission
+            PathBuf::from("/lib"),   // Dynamic linker needs exec permission
         ],
         deny_network: false,
     };
@@ -57,7 +57,7 @@ fn test_landlock_blocks_unauthorized_read() {
     };
 
     let status = launch_sandboxed(config).unwrap();
-    
+
     // Should exit with 42 because forbidden file read fails
     assert_eq!(status.code(), Some(42));
 }
@@ -87,7 +87,7 @@ fn test_seccomp_blocks_kexec() {
     };
 
     let status = launch_sandboxed(config).unwrap();
-    
+
     // Should succeed (we're not actually calling kexec, just testing the setup)
     assert!(status.success());
 }
@@ -116,7 +116,7 @@ fn test_network_namespace_isolation() {
     };
 
     let status = launch_sandboxed(config).unwrap();
-    
+
     // Should succeed (no non-loopback interfaces UP)
     assert!(status.success());
 }
@@ -142,7 +142,7 @@ fn test_strict_mode_enforcement() {
     // In strict mode, if any layer fails, the sandbox should exit with status 1
     // This test may pass or fail depending on kernel support
     let result = launch_sandboxed(config);
-    
+
     // Either succeeds (all layers available) or fails (some layer unavailable)
     match result {
         Ok(status) => {
@@ -205,9 +205,10 @@ fn test_capabilities_dropped() {
                 "if [ -r /proc/self/status ]; then ",
                 "  grep CapEff /proc/self/status | grep -q '0000000000000000'; ",
                 "else ",
-                "  exit 0; ",  // /proc not accessible = sandbox is very restrictive = caps dropped
+                "  exit 0; ", // /proc not accessible = sandbox is very restrictive = caps dropped
                 "fi"
-            ).to_string(),
+            )
+            .to_string(),
         ],
         workspace: workspace.path().to_path_buf(),
         policy: None,

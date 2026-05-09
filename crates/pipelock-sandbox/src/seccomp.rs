@@ -259,7 +259,7 @@ fn personality_conditional() -> Vec<SockFilter> {
     vec![
         bpf_jump_eq(libc::SYS_personality as u32, 0, 8),
         bpf_load(SECCOMP_DATA_ARGS_OFFSET),
-        bpf_jump_eq(0, 5, 0),                                // PER_LINUX
+        bpf_jump_eq(0, 5, 0), // PER_LINUX
         bpf_jump_eq(ADDR_NO_RANDOMIZE, 4, 0),
         bpf_jump_eq(PER_LINUX32, 3, 0),
         bpf_jump_eq(PER_LINUX32_NO_RANDOMIZE, 2, 0),

@@ -33,7 +33,7 @@ pub fn run_init() -> ! {
 fn run_init_inner() -> Result<(), SandboxError> {
     let strict = is_strict_mode();
     let no_netns = is_no_netns();
-    
+
     // Create PID namespace if we have other namespaces
     // This must be done AFTER re-exec to avoid making the pipelock binary PID 1
     if !no_netns {
@@ -67,14 +67,18 @@ fn run_init_inner() -> Result<(), SandboxError> {
                                 if proc_mounted {
                                     eprintln!("[sandbox] pid: ACTIVE (PID {}, isolated namespace, /proc remounted)", std::process::id());
                                 } else {
-                                    eprintln!("[sandbox] pid: ACTIVE (PID {}, isolated namespace)", std::process::id());
+                                    eprintln!(
+                                        "[sandbox] pid: ACTIVE (PID {}, isolated namespace)",
+                                        std::process::id()
+                                    );
                                 }
                             }
                             grandchild_pid => {
                                 // Child (PID 1): wait for grandchild and forward exit status
                                 let mut status: libc::c_int = 0;
                                 loop {
-                                    let ret = unsafe { libc::waitpid(grandchild_pid, &mut status, 0) };
+                                    let ret =
+                                        unsafe { libc::waitpid(grandchild_pid, &mut status, 0) };
                                     if ret == grandchild_pid {
                                         if libc::WIFEXITED(status) {
                                             exit(libc::WEXITSTATUS(status));
@@ -122,7 +126,7 @@ fn run_init_inner() -> Result<(), SandboxError> {
             }
         }
     }
-    
+
     // Read configuration from environment
     let workspace = env::var("__PIPELOCK_SANDBOX_WORKSPACE")
         .map_err(|_| SandboxError::InvalidPolicy("missing workspace env".to_string()))?;
@@ -206,10 +210,12 @@ fn run_init_inner() -> Result<(), SandboxError> {
     let mut policy = resolve_policy(&workspace)?;
     policy.read_write_paths.push(PathBuf::from(&sandbox_dir));
 
-    eprintln!("[sandbox] policy: {} read-only, {} read-write, {} exec paths", 
-              policy.read_only_paths.len(),
-              policy.read_write_paths.len(), 
-              policy.exec_paths.len());
+    eprintln!(
+        "[sandbox] policy: {} read-only, {} read-write, {} exec paths",
+        policy.read_only_paths.len(),
+        policy.read_write_paths.len(),
+        policy.exec_paths.len()
+    );
 
     match apply_landlock(&policy) {
         Ok(_) => eprintln!("[sandbox] filesystem: ACTIVE (Landlock)"),
@@ -297,7 +303,7 @@ fn run_init_inner() -> Result<(), SandboxError> {
                 format!("/bin/{}", command[0]),
                 format!("/usr/local/bin/{}", command[0]),
             ];
-            
+
             let mut found = None;
             for path in &common_paths {
                 if std::path::Path::new(path).exists() {
@@ -305,14 +311,18 @@ fn run_init_inner() -> Result<(), SandboxError> {
                     break;
                 }
             }
-            
+
             found.ok_or_else(|| {
                 SandboxError::InvalidPolicy(format!("command not found: {}: {}", command[0], e))
             })?
         }
     };
 
-    eprintln!("[sandbox] executing: {} with {} args", binary.display(), command.len() - 1);
+    eprintln!(
+        "[sandbox] executing: {} with {} args",
+        binary.display(),
+        command.len() - 1
+    );
 
     let err = Command::new(binary)
         .args(&command[1..])
@@ -325,7 +335,11 @@ fn run_init_inner() -> Result<(), SandboxError> {
         .exec();
 
     // If exec returns, it failed
-    eprintln!("[sandbox] exec error: {} (errno: {:?})", err, err.raw_os_error());
+    eprintln!(
+        "[sandbox] exec error: {} (errno: {:?})",
+        err,
+        err.raw_os_error()
+    );
     Err(SandboxError::Io(std::io::Error::new(
         err.kind(),
         format!("exec failed: {}", err),
@@ -357,7 +371,7 @@ fn default_policy(workspace: &str) -> Policy {
         // new mount and restricts it to the PID namespace's process view.
         PathBuf::from("/proc"),
     ];
-    
+
     // Add architecture-specific lib paths if they exist
     for arch_lib in &[
         "/lib/x86_64-linux-gnu",
@@ -371,13 +385,13 @@ fn default_policy(workspace: &str) -> Policy {
             read_only.push(path);
         }
     }
-    
+
     Policy {
         read_only_paths: read_only,
         read_write_paths: vec![
             PathBuf::from(workspace),
             PathBuf::from("/dev/shm"),
-            PathBuf::from("/dev/null"),  // Allow /dev/null for shell redirections
+            PathBuf::from("/dev/null"), // Allow /dev/null for shell redirections
         ],
         exec_paths: vec![
             PathBuf::from("/bin"),
@@ -385,8 +399,8 @@ fn default_policy(workspace: &str) -> Policy {
             PathBuf::from("/usr/local/bin"),
             PathBuf::from("/sbin"),
             PathBuf::from("/usr/sbin"),
-            PathBuf::from("/lib64"),  // Dynamic linker needs exec permission
-            PathBuf::from("/lib"),    // Dynamic linker needs exec permission
+            PathBuf::from("/lib64"), // Dynamic linker needs exec permission
+            PathBuf::from("/lib"),   // Dynamic linker needs exec permission
         ],
         deny_network: false,
     }
@@ -427,7 +441,7 @@ fn mount_private_shm() -> Result<(), SandboxError> {
 /// After creating a PID namespace, /proc still shows the host's processes.
 /// Remounting it gives the sandboxed process a view of only its own PID namespace.
 /// Returns true on success, false if mount failed (non-fatal).
-/// 
+///
 /// NOTE: This must be called BEFORE apply_landlock() so the new /proc mount
 /// is covered by the Landlock policy.
 fn mount_proc() -> bool {
@@ -458,14 +472,17 @@ fn apply_rlimits() -> Result<(), SandboxError> {
     })?;
 
     // Limit file size (prevent disk exhaustion)
-    setrlimit(Resource::RLIMIT_FSIZE, 10 * 1024 * 1024 * 1024, 10 * 1024 * 1024 * 1024).map_err(
-        |e| {
-            SandboxError::Io(std::io::Error::new(
-                std::io::ErrorKind::Other,
-                format!("setrlimit FSIZE: {}", e),
-            ))
-        },
-    )?;
+    setrlimit(
+        Resource::RLIMIT_FSIZE,
+        10 * 1024 * 1024 * 1024,
+        10 * 1024 * 1024 * 1024,
+    )
+    .map_err(|e| {
+        SandboxError::Io(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            format!("setrlimit FSIZE: {}", e),
+        ))
+    })?;
 
     Ok(())
 }

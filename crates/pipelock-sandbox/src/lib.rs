@@ -52,7 +52,7 @@ mod netns;
 mod caps;
 
 #[cfg(target_os = "linux")]
-pub use launcher::{prepare_sandbox_cmd, launch_sandboxed, LaunchConfig, is_sandbox_init};
+pub use launcher::{is_sandbox_init, launch_sandboxed, prepare_sandbox_cmd, LaunchConfig};
 
 #[cfg(target_os = "linux")]
 pub use child::run_init;
@@ -65,7 +65,9 @@ pub enum SandboxError {
     InvalidPolicy(String),
     #[error("landlock: {0}\nRemediation: Ensure kernel >= 5.13 and CONFIG_SECURITY_LANDLOCK=y")]
     Landlock(String),
-    #[error("seccomp: {0}\nRemediation: Ensure CONFIG_SECCOMP=y and CONFIG_SECCOMP_FILTER=y in kernel")]
+    #[error(
+        "seccomp: {0}\nRemediation: Ensure CONFIG_SECCOMP=y and CONFIG_SECCOMP_FILTER=y in kernel"
+    )]
     Seccomp(String),
     #[error("io: {0}")]
     Io(#[from] std::io::Error),

@@ -85,9 +85,8 @@ pub fn prepare_sandbox_cmd(cfg: LaunchConfig) -> Result<Command, SandboxError> {
 
     // Serialize policy if provided
     if let Some(policy) = &cfg.policy {
-        let policy_json = serde_json::to_string(policy).map_err(|e| {
-            SandboxError::InvalidPolicy(format!("serializing policy: {}", e))
-        })?;
+        let policy_json = serde_json::to_string(policy)
+            .map_err(|e| SandboxError::InvalidPolicy(format!("serializing policy: {}", e)))?;
         cmd.env("__PIPELOCK_SANDBOX_POLICY", policy_json);
     }
 
@@ -95,9 +94,8 @@ pub fn prepare_sandbox_cmd(cfg: LaunchConfig) -> Result<Command, SandboxError> {
     // Note: PID namespace is NOT created here because it would make the pipelock binary
     // itself PID 1, which breaks Tokio. Instead, we create PID namespace after re-exec
     // in the child initialization code.
-    let clone_flags = CloneFlags::CLONE_NEWUSER 
-        | CloneFlags::CLONE_NEWNET 
-        | CloneFlags::CLONE_NEWNS;  // Mount namespace isolation
+    let clone_flags =
+        CloneFlags::CLONE_NEWUSER | CloneFlags::CLONE_NEWNET | CloneFlags::CLONE_NEWNS; // Mount namespace isolation
 
     let uid = Uid::current();
     let gid = Gid::current();
@@ -119,7 +117,7 @@ pub fn prepare_sandbox_cmd(cfg: LaunchConfig) -> Result<Command, SandboxError> {
                         // Strict mode: fail immediately
                         return Err(std::io::Error::new(
                             std::io::ErrorKind::PermissionDenied,
-                            format!("namespace creation failed (strict mode): {}", e)
+                            format!("namespace creation failed (strict mode): {}", e),
                         ));
                     } else {
                         // Best-effort mode: continue without namespaces
@@ -170,9 +168,9 @@ fn validate_workspace(workspace: &PathBuf) -> Result<(), SandboxError> {
 
     // Check for dangerous roots
     let dangerous = ["/", "/tmp", "/home", "/etc", "/usr", "/var"];
-    let canonical = workspace.canonicalize().map_err(|e| {
-        SandboxError::InvalidPolicy(format!("canonicalizing workspace: {}", e))
-    })?;
+    let canonical = workspace
+        .canonicalize()
+        .map_err(|e| SandboxError::InvalidPolicy(format!("canonicalizing workspace: {}", e)))?;
 
     for root in &dangerous {
         if canonical == PathBuf::from(root) {

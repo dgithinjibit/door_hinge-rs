@@ -60,7 +60,7 @@ pub(crate) fn drop_all_capabilities() -> Result<(), SandboxError> {
 fn drop_capability_sets() -> Result<(), SandboxError> {
     // Use capset(2) to clear all capability sets
     // This is a simplified version - in production you'd use the `caps` crate
-    
+
     #[repr(C)]
     struct CapUserHeader {
         version: u32,
