@@ -1,0 +1,14 @@
+[package]
+name = "agent-signing"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Ed25519 keygen, file signing, signature verification."
+
+[dependencies]
+agent-core = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,130 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/agent",
+    "crates/agent-core",
+    "crates/agent-config",
+    "crates/agent-normalize",
+    "crates/agent-scanner",
+    "crates/agent-decide",
+    "crates/agent-rules",
+    "crates/agent-redact",
+    "crates/agent-seedprotect",
+    "crates/agent-addressprotect",
+    "crates/agent-killswitch",
+    "crates/agent-envelope",
+    "crates/agent-signing",
+    "crates/agent-receipt",
+    "crates/agent-recorder",
+    "crates/agent-audit",
+    "crates/agent-emit",
+    "crates/agent-metrics",
+    "crates/agent-hitl",
+    "crates/agent-capture",
+    "crates/agent-filesentry",
+    "crates/agent-sandbox",
+    "crates/agent-mcp",
+    "crates/agent-proxy",
+    "crates/agent-scanapi",
+    "crates/agent-sdk",
+]
+
+[workspace.package]
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.80"
+license = "Apache-2.0"
+repository = "https://github.com/dgithinjibit/agent"
+authors = ["agent-rs contributors"]
+
+[workspace.dependencies]
+# Local crates
+agent-core = { path = "crates/agent-core" }
+agent-config = { path = "crates/agent-config" }
+agent-normalize = { path = "crates/agent-normalize" }
+agent-scanner = { path = "crates/agent-scanner" }
+agent-decide = { path = "crates/agent-decide" }
+agent-rules = { path = "crates/agent-rules" }
+agent-redact = { path = "crates/agent-redact" }
+agent-seedprotect = { path = "crates/agent-seedprotect" }
+agent-addressprotect = { path = "crates/agent-addressprotect" }
+agent-killswitch = { path = "crates/agent-killswitch" }
+agent-envelope = { path = "crates/agent-envelope" }
+agent-signing = { path = "crates/agent-signing" }
+agent-receipt = { path = "crates/agent-receipt" }
+agent-recorder = { path = "crates/agent-recorder" }
+agent-audit = { path = "crates/agent-audit" }
+agent-emit = { path = "crates/agent-emit" }
+agent-metrics = { path = "crates/agent-metrics" }
+agent-hitl = { path = "crates/agent-hitl" }
+agent-capture = { path = "crates/agent-capture" }
+agent-filesentry = { path = "crates/agent-filesentry" }
+agent-sandbox = { path = "crates/agent-sandbox" }
+agent-mcp = { path = "crates/agent-mcp" }
+agent-proxy = { path = "crates/agent-proxy" }
+agent-scanapi = { path = "crates/agent-scanapi" }
+agent-sdk = { path = "crates/agent-sdk" }
+
+# External
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+thiserror = "1"
+anyhow = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tokio = { version = "1", features = ["full"] }
+clap = { version = "4", features = ["derive"] }
+url = "2"
+regex = "1"
+aho-corasick = "1"
+arc-swap = "1"
+parking_lot = "0.12"
+dashmap = "6"
+zeroize = { version = "1", features = ["derive"] }
+ed25519-dalek = { version = "2", features = ["rand_core"] }
+sha2 = "0.10"
+blake3 = "1"
+uuid = { version = "1", features = ["v4", "serde"] }
+hex = "0.4"
+base64 = "0.22"
+hyper = { version = "1", features = ["full"] }
+hyper-util = { version = "0.1", features = ["full"] }
+http-body-util = "0.1"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json", "stream"] }
+axum = "0.7"
+tokio-tungstenite = "0.24"
+notify = "6"
+unicode-normalization = "0.1"
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+unused_must_use = "deny"
+unreachable_pub = "warn"
+
+[workspace.lints.clippy]
+# Hard denies — bugs we never want shipping.
+unwrap_used = "warn"
+expect_used = "warn"
+panic = "warn"
+todo = "warn"
+dbg_macro = "warn"
+print_stdout = "allow"           # CLI binary uses println for user output.
+print_stderr = "allow"
+# Style nits we care about.
+needless_borrow = "warn"
+redundant_clone = "warn"
+manual_let_else = "warn"
+# Disable noisy / opinionated lints.
+module_name_repetitions = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
+
+[profile.dev]
+opt-level = 0

@@ -1,0 +1,31 @@
+[package]
+name = "agent-proxy"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "HTTP forward and reverse proxy with request/response scanning."
+
+[dependencies]
+agent-core = { workspace = true }
+agent-config = { workspace = true }
+agent-scanner = { workspace = true }
+agent-audit = { workspace = true }
+tokio = { workspace = true }
+hyper = { workspace = true }
+hyper-util = { workspace = true }
+http-body-util = { workspace = true }
+reqwest = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+thiserror = { workspace = true }
+url = { workspace = true }
+bytes = "1"
+
+[dev-dependencies]
+agent-recorder = { workspace = true }
+tempfile = "3"
+
+[lints]
+workspace = true

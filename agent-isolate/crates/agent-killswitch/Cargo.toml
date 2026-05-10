@@ -1,0 +1,14 @@
+[package]
+name = "agent-killswitch"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Four-source OR-composed deny-all kill switch."
+
+[dependencies]
+agent-core = { workspace = true }
+
+[lints]
+workspace = true

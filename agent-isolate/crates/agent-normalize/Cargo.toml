@@ -1,0 +1,14 @@
+[package]
+name = "agent-normalize"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "6-pass unicode normalization for DLP and injection scanning."
+
+[dependencies]
+unicode-normalization = { workspace = true }
+
+[lints]
+workspace = true

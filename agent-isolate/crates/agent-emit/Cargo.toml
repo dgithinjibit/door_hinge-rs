@@ -1,0 +1,14 @@
+[package]
+name = "agent-emit"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "SIEM, webhook, syslog forwarders (fire-and-forget)."
+
+[dependencies]
+agent-core = { workspace = true }
+
+[lints]
+workspace = true
