@@ -3,6 +3,252 @@
 version = 3
 
 [[package]]
+name = "agent"
+version = "0.0.1"
+dependencies = [
+ "agent-audit",
+ "agent-config",
+ "agent-core",
+ "agent-killswitch",
+ "agent-proxy",
+ "agent-recorder",
+ "agent-sandbox",
+ "agent-scanner",
+ "anyhow",
+ "clap",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "agent-addressprotect"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-audit"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+ "agent-recorder",
+ "tracing",
+]
+
+[[package]]
+name = "agent-capture"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-config"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+ "arc-swap",
+ "serde",
+ "serde_yaml",
+ "thiserror 1.0.69",
+]
+
+[[package]]
+name = "agent-core"
+version = "0.0.1"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "url",
+ "zeroize",
+]
+
+[[package]]
+name = "agent-decide"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-emit"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-envelope"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-filesentry"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-hitl"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-killswitch"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-mcp"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-metrics"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-normalize"
+version = "0.0.1"
+dependencies = [
+ "unicode-normalization",
+]
+
+[[package]]
+name = "agent-proxy"
+version = "0.0.1"
+dependencies = [
+ "agent-audit",
+ "agent-config",
+ "agent-core",
+ "agent-recorder",
+ "agent-scanner",
+ "bytes",
+ "http-body-util",
+ "hyper",
+ "hyper-util",
+ "reqwest",
+ "serde_json",
+ "tempfile",
+ "thiserror 1.0.69",
+ "tokio",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "agent-receipt"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-recorder"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+ "blake3",
+ "hex",
+ "parking_lot",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 1.0.69",
+ "uuid",
+]
+
+[[package]]
+name = "agent-redact"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-rules"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-sandbox"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+ "landlock",
+ "libc",
+ "netlink-packet-route",
+ "netlink-sys",
+ "nix",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 1.0.69",
+ "tracing",
+ "which",
+]
+
+[[package]]
+name = "agent-scanapi"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-scanner"
+version = "0.0.1"
+dependencies = [
+ "agent-config",
+ "agent-core",
+ "agent-normalize",
+ "aho-corasick",
+ "regex",
+ "serde_json",
+ "thiserror 1.0.69",
+ "url",
+]
+
+[[package]]
+name = "agent-sdk"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-seedprotect"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
+name = "agent-signing"
+version = "0.0.1"
+dependencies = [
+ "agent-core",
+]
+
+[[package]]
 name = "aho-corasick"
 version = "1.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -979,252 +1225,6 @@ name = "pin-project-lite"
 version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
-
-[[package]]
-name = "pipelock"
-version = "0.0.1"
-dependencies = [
- "anyhow",
- "clap",
- "pipelock-audit",
- "pipelock-config",
- "pipelock-core",
- "pipelock-killswitch",
- "pipelock-proxy",
- "pipelock-recorder",
- "pipelock-sandbox",
- "pipelock-scanner",
- "serde_json",
- "tokio",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "pipelock-addressprotect"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-audit"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
- "pipelock-recorder",
- "tracing",
-]
-
-[[package]]
-name = "pipelock-capture"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-config"
-version = "0.0.1"
-dependencies = [
- "arc-swap",
- "pipelock-core",
- "serde",
- "serde_yaml",
- "thiserror 1.0.69",
-]
-
-[[package]]
-name = "pipelock-core"
-version = "0.0.1"
-dependencies = [
- "serde",
- "serde_json",
- "thiserror 1.0.69",
- "url",
- "zeroize",
-]
-
-[[package]]
-name = "pipelock-decide"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-emit"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-envelope"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-filesentry"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-hitl"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-killswitch"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-mcp"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-metrics"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-normalize"
-version = "0.0.1"
-dependencies = [
- "unicode-normalization",
-]
-
-[[package]]
-name = "pipelock-proxy"
-version = "0.0.1"
-dependencies = [
- "bytes",
- "http-body-util",
- "hyper",
- "hyper-util",
- "pipelock-audit",
- "pipelock-config",
- "pipelock-core",
- "pipelock-recorder",
- "pipelock-scanner",
- "reqwest",
- "serde_json",
- "tempfile",
- "thiserror 1.0.69",
- "tokio",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "pipelock-receipt"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-recorder"
-version = "0.0.1"
-dependencies = [
- "blake3",
- "hex",
- "parking_lot",
- "pipelock-core",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 1.0.69",
- "uuid",
-]
-
-[[package]]
-name = "pipelock-redact"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-rules"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-sandbox"
-version = "0.0.1"
-dependencies = [
- "landlock",
- "libc",
- "netlink-packet-route",
- "netlink-sys",
- "nix",
- "pipelock-core",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 1.0.69",
- "tracing",
- "which",
-]
-
-[[package]]
-name = "pipelock-scanapi"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-scanner"
-version = "0.0.1"
-dependencies = [
- "aho-corasick",
- "pipelock-config",
- "pipelock-core",
- "pipelock-normalize",
- "regex",
- "serde_json",
- "thiserror 1.0.69",
- "url",
-]
-
-[[package]]
-name = "pipelock-sdk"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-seedprotect"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
-
-[[package]]
-name = "pipelock-signing"
-version = "0.0.1"
-dependencies = [
- "pipelock-core",
-]
 
 [[package]]
 name = "potential_utf"

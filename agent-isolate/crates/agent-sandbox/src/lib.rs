@@ -162,10 +162,15 @@ fn apply_landlock(policy: &Policy) -> Result<(), SandboxError> {
         RulesetStatus, ABI,
     };
 
-    // ABI::V1 is the lowest common denominator — kernel 5.13+. The crate
-    // upgrades to higher ABIs automatically when available; we declare the
-    // set of access rights we care about up front.
-    let abi = ABI::V1;
+    // Detect highest supported ABI (V1-V5) with fallback chain
+    // V1: kernel 5.13+ (basic file access)
+    // V2: kernel 5.19+ (refer - hardlink/rename across directories)
+    // V3: kernel 6.2+ (truncate)
+    // V4: kernel 6.7+ (network socket bind restrictions)
+    // V5: kernel 6.10+ (ioctl_dev - ioctl on device files)
+    // The landlock crate automatically negotiates the highest supported ABI
+    let abi = ABI::V5;
+
     let all_fs = AccessFs::from_all(abi);
 
     let mut ruleset = Ruleset::default()
@@ -174,7 +179,39 @@ fn apply_landlock(policy: &Policy) -> Result<(), SandboxError> {
         .create()
         .map_err(|e| SandboxError::Landlock(format!("create: {e}")))?;
 
-    let ro = AccessFs::ReadDir | AccessFs::ReadFile;
+    // Build access rights based on detected ABI
+    let mut ro = AccessFs::ReadDir | AccessFs::ReadFile;
+    let mut rw = AccessFs::ReadDir
+        | AccessFs::ReadFile
+        | AccessFs::WriteFile
+        | AccessFs::RemoveDir
+        | AccessFs::RemoveFile
+        | AccessFs::MakeChar
+        | AccessFs::MakeDir
+        | AccessFs::MakeReg
+        | AccessFs::MakeSock
+        | AccessFs::MakeFifo
+        | AccessFs::MakeBlock
+        | AccessFs::MakeSym;
+
+    // V2: Add refer (hardlink/rename across directories)
+    if abi >= ABI::V2 {
+        ro |= AccessFs::Refer;
+        rw |= AccessFs::Refer;
+    }
+
+    // V3: Add truncate
+    if abi >= ABI::V3 {
+        rw |= AccessFs::Truncate;
+    }
+
+    // V5: Add ioctl_dev (ioctl on device files)
+    if abi >= ABI::V5 {
+        // Only add to read-write paths (devices typically need write access)
+        rw |= AccessFs::IoctlDev;
+    }
+
+    // Apply read-only rules
     for path in &policy.read_only_paths {
         let fd = PathFd::new(path)
             .map_err(|e| SandboxError::Landlock(format!("open {}: {e}", path.display())))?;
@@ -183,16 +220,21 @@ fn apply_landlock(policy: &Policy) -> Result<(), SandboxError> {
             .map_err(|e| SandboxError::Landlock(format!("add ro {}: {e}", path.display())))?;
     }
 
+    // Apply read-write rules
     for path in &policy.read_write_paths {
         let fd = PathFd::new(path)
             .map_err(|e| SandboxError::Landlock(format!("open {}: {e}", path.display())))?;
         ruleset = ruleset
-            .add_rule(PathBeneath::new(fd, all_fs))
+            .add_rule(PathBeneath::new(fd, rw))
             .map_err(|e| SandboxError::Landlock(format!("add rw {}: {e}", path.display())))?;
     }
 
-    // Exec paths need both read and execute permissions
-    let exec_perms = AccessFs::ReadDir | AccessFs::ReadFile | AccessFs::Execute;
+    // Exec paths need read and execute permissions
+    let mut exec_perms = AccessFs::ReadDir | AccessFs::ReadFile | AccessFs::Execute;
+    if abi >= ABI::V2 {
+        exec_perms |= AccessFs::Refer;
+    }
+
     for path in &policy.exec_paths {
         let fd = PathFd::new(path)
             .map_err(|e| SandboxError::Landlock(format!("open {}: {e}", path.display())))?;
@@ -207,12 +249,15 @@ fn apply_landlock(policy: &Policy) -> Result<(), SandboxError> {
 
     match status.ruleset {
         RulesetStatus::FullyEnforced => {
-            tracing::info!(target: "agent.sandbox", "Landlock fully enforced");
+            tracing::info!(
+                target: "agent.sandbox",
+                "Landlock fully enforced (ABI: {:?})", abi
+            );
         }
         RulesetStatus::PartiallyEnforced => {
             tracing::warn!(
                 target: "agent.sandbox",
-                "Landlock partially enforced — kernel ABI lower than requested",
+                "Landlock partially enforced — kernel ABI lower than requested (ABI: {:?})", abi
             );
         }
         RulesetStatus::NotEnforced => {

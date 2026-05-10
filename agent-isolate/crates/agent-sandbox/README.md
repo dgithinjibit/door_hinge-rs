@@ -1,13 +1,19 @@
 # agent-sandbox
 
-Rust implementation of process sandboxing for pipelock using Linux kernel security features.
+Production-ready Rust implementation of process sandboxing using Linux kernel security features. Provides defense-in-depth isolation for AI agent processes through Landlock V5 filesystem restrictions, seccomp BPF syscall filtering, and namespace-based containment.
 
 ## Features
 
-- **Landlock filesystem isolation**: Restricts file access to explicitly allowed paths
-- **Seccomp syscall filtering**: Blocks ~400 dangerous syscalls, allows ~130 safe ones
+- **Landlock V5 filesystem isolation**: Restricts file access with ABI negotiation (V1-V5)
+  - V1 (kernel 5.13+): Basic file access control
+  - V2 (kernel 5.19+): Hardlink/rename across directories (refer)
+  - V3 (kernel 6.2+): File truncation control
+  - V4 (kernel 6.7+): Network socket bind restrictions
+  - V5 (kernel 6.10+): Device ioctl restrictions
+- **Seccomp BPF syscall filtering**: Blocks ~400 dangerous syscalls, allows ~130 safe ones with TSYNC for multi-threaded runtimes
 - **User namespaces**: Isolates process from host user/group IDs
-- **Network namespaces**: Isolates network stack (strict mode only)
+- **Network namespaces**: Kernel-enforced network isolation with loopback configuration
+- **Mount namespaces**: Private /dev/shm for strict mode
 - **Capability dropping**: Removes all Linux capabilities
 - **Resource limits**: Prevents fork bombs and disk exhaustion
 - **Environment sanitization**: Provides clean, minimal environment
@@ -163,22 +169,24 @@ cargo test -p agent-sandbox test_landlock_blocks_unauthorized_read -- --test-thr
 ## Limitations
 
 - **Best-effort network isolation**: Without user namespaces, network isolation relies on HTTP_PROXY environment variables which can be bypassed by child processes
-- **Landlock version**: Uses ABI v1 (kernel 5.13+), newer ABIs provide more features
+- **Landlock ABI negotiation**: Automatically uses highest supported ABI (V1-V5) based on kernel version
 - **Test isolation**: Integration tests must run serially (`--test-threads=1`) due to namespace isolation
 - **PID namespace**: Not used due to compatibility issues with multi-threaded applications (causes thread creation failures)
-- **Namespace probing removed**: The sandbox attempts namespace creation directly in pre_exec rather than probing in the parent process
 
 ## Implementation Status
 
 ✅ **Complete**:
-- Seccomp filter with ~130 syscall allowlist and argument filtering for clone/socket/personality
+- Landlock V5 with ABI negotiation (V1-V5 support)
+- Seccomp filter with ~130 syscall allowlist, TSYNC flag for multi-threaded runtimes
+- Conditional argument filtering for clone/socket/personality syscalls
 - Namespace re-exec (user + network + mount namespaces)
-- Landlock filesystem isolation
 - Capability dropping with graceful EPERM handling
+- Network namespace loopback configuration
+- Private /dev/shm mount (strict mode)
 - Resource limits (NPROC=4096, FSIZE=10GB)
 - Environment sanitization
-- Integration tests (7/7 passing)
-- Proper namespace creation in pre_exec (no parent process contamination)
+- Strict vs best-effort mode selection
+- Policy validation (secret directory protection)
 
 ❌ **Not Implemented**:
 - PID namespace (incompatible with multi-threaded applications)
