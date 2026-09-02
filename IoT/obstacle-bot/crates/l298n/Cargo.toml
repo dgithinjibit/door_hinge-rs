@@ -1,0 +1,14 @@
+[package]
+name = "l298n"
+version = "0.1.0"
+description = "Platform-agnostic embedded-hal 1.0 driver for the L298N dual H-bridge motor driver. Works on AVR / Cortex-M / ESP32 / RP2040."
+keywords = ["l298n", "motor", "h-bridge", "embedded-hal", "driver"]
+categories = ["embedded", "hardware-support", "no-std"]
+readme = "README.md"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+embedded-hal = { workspace = true }

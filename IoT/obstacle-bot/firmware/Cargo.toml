@@ -1,0 +1,21 @@
+[package]
+name = "obstacle-bot-firmware"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[[bin]]
+name = "obstacle-bot-firmware"
+path = "src/main.rs"
+test = false
+bench = false
+
+[dependencies]
+panic-halt = { workspace = true }
+ufmt = { workspace = true }
+nb = { workspace = true }
+embedded-hal = { workspace = true }
+arduino-hal = { workspace = true }
+hc-sr04 = { path = "../crates/hc-sr04" }
+l298n = { path = "../crates/l298n" }

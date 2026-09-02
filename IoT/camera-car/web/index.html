@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>camera-car</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background:#111; color:#eee; margin:0; padding:1rem; text-align:center; }
+    h1 { font-size:1.2rem; margin:.5rem 0 1rem; }
+    img { width:100%; max-width:640px; border-radius:8px; background:#000; }
+    .pad { display:grid; grid-template-columns:repeat(3, 80px); grid-template-rows:repeat(3, 80px); gap:.5rem; justify-content:center; margin:1rem auto; }
+    button { font-size:1.2rem; border:0; border-radius:8px; background:#2a6df4; color:#fff; }
+    button:active { background:#1948b3; }
+    button.stop { background:#c0392b; }
+    .pad .up    { grid-column:2; grid-row:1; }
+    .pad .left  { grid-column:1; grid-row:2; }
+    .pad .stop  { grid-column:2; grid-row:2; }
+    .pad .right { grid-column:3; grid-row:2; }
+    .pad .down  { grid-column:2; grid-row:3; }
+  </style>
+</head>
+<body>
+  <h1>camera-car</h1>
+  <img id="cam" src="/stream" alt="live stream">
+  <div class="pad">
+    <button class="up"    onpointerdown="go('forward')" onpointerup="go('stop')">▲</button>
+    <button class="left"  onpointerdown="go('left')"    onpointerup="go('stop')">◀</button>
+    <button class="stop"  onclick="go('stop')">■</button>
+    <button class="right" onpointerdown="go('right')"   onpointerup="go('stop')">▶</button>
+    <button class="down"  onpointerdown="go('reverse')" onpointerup="go('stop')">▼</button>
+  </div>
+  <script>
+    async function go(dir) {
+      try { await fetch('/drive/' + dir, { method: 'POST' }); } catch (e) {}
+    }
+    document.addEventListener('contextmenu', e => e.preventDefault());
+  </script>
+</body>
+</html>

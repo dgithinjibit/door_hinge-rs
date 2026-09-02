@@ -1,0 +1,4 @@
+[general]
+board = "nano"
+open-console = true
+serial-baudrate = 57600

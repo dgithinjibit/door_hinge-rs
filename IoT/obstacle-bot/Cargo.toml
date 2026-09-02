@@ -1,0 +1,36 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/hc-sr04",
+    "crates/l298n",
+    "firmware",
+]
+
+[workspace.package]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+authors = ["Daniel Githinji"]
+repository = "https://github.com/danielgithinji/obstacle-bot"
+
+[workspace.dependencies]
+embedded-hal = "1.0"
+panic-halt = "1.0"
+ufmt = "0.2"
+nb = "1.1"
+
+[workspace.dependencies.arduino-hal]
+git = "https://github.com/rahix/avr-hal"
+rev = "3e362624547462928a219c40f9ea8e3a64f21e5f"
+features = ["arduino-nano"]
+
+[profile.dev]
+panic = "abort"
+lto = true
+opt-level = "s"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+debug = true
+lto = true
+opt-level = "s"

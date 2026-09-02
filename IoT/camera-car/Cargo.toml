@@ -1,0 +1,43 @@
+[package]
+name = "camera-car"
+version = "0.1.0"
+authors = ["Daniel Githinji"]
+edition = "2021"
+resolver = "2"
+rust-version = "1.77"
+
+[[bin]]
+name = "camera-car"
+harness = false
+
+[profile.release]
+opt-level = "s"
+lto = "fat"
+codegen-units = 1
+strip = true
+
+[profile.dev]
+debug = true
+opt-level = "z"
+
+[features]
+default = ["std", "embassy", "esp-idf-svc/native"]
+pio = ["esp-idf-svc/pio"]
+std = ["alloc", "esp-idf-svc/binstart", "esp-idf-svc/std"]
+alloc = ["esp-idf-svc/alloc"]
+nightly = ["esp-idf-svc/nightly"]
+experimental = ["esp-idf-svc/experimental"]
+embassy = ["esp-idf-svc/embassy-sync", "esp-idf-svc/critical-section", "esp-idf-svc/embassy-time-driver"]
+
+[dependencies]
+log = "0.4"
+anyhow = "1.0"
+esp-idf-svc = { version = "0.52.1", default-features = false }
+heapless = "0.8"
+
+[dependencies.esp-camera-rs]
+git = "https://github.com/jlocash/esp-camera-rs"
+rev = "main"
+
+[build-dependencies]
+embuild = "0.33"
